@@ -40,6 +40,16 @@ restraint (Law 2), and the triage table below anticipates exactly that break:
 on a branch that can't absorb a surprise commit, have branch protection in
 place before probing the doers.
 
+> ⚠️ **A doer probe is a summon, not a ping.** The OpenHands and Copilot
+> probes below don't just confirm connectivity — they **spawn real doer
+> sessions** (OpenHands one per mention, per Law 4). Field-tested 2026-08-21:
+> the `@openhands are you connected?` probe on PR #4 and on issue #3 each
+> summoned a separate OpenHands session (distinct conversation IDs) — the
+> summoner summoned itself. The leash held both times, but a leash is a
+> request, not a restraint (Law 2), so run the doer probes on a branch that
+> can absorb a surprise commit and expect a session per doer probe, not just
+> a comment back. (See `NOTES.md` → "The connection probe IS the summon".)
+
 | # | Probe (post verbatim, one comment each) | Connected looks like |
 |---|---|---|
 | 1 | `@coderabbitai help` | command-list reply within ~1 min |
