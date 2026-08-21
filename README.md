@@ -109,6 +109,12 @@ submodule in the target repo so the file is physically present:
 git submodule add -b main https://github.com/dogi/agents-summoning.git .agents/skills/agents-summoning
 ```
 
+On a fresh clone of the target repo the committed gitlink arrives
+uninitialized — the skill is silently skipped until
+`git submodule update --init --recursive` runs. Wire that into
+`.openhands/setup.sh` so sessions bootstrap it before skill discovery
+(see `references/skill-sync.md`).
+
 Bump the pin after every merge here, or OpenHands keeps seeing the old revision
 while Claude Code's marketplace fetch tracks this repo's `main` tip:
 
