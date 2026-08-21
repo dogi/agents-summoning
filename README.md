@@ -128,4 +128,7 @@ then commit the gitlink (`--checkout` matters: it forces the pin even where the
 target repo configures `merge`/`rebase` update modes, and the submodule sits on
 a detached HEAD). Bonus: `.agents/skills` is also one of Copilot's project
 skill directories (alongside `.github/skills` and `.claude/skills`), so the
-same submodule serves Copilot's coding agent with no extra wiring.
+same submodule serves Copilot's coding agent — provided its checkout
+initializes submodules, which a plain clone does not: wire
+`git submodule update --init --recursive` into Copilot's setup steps the same
+way `.openhands/setup.sh` does it for OpenHands.

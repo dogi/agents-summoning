@@ -32,9 +32,12 @@ walk this checklist. Two facts frame all of it:
 A repeatable probe run that turns the checklist above into a verdict. Cast it
 on an **open PR you own**: one probe per agent, **each in its own comment**
 (Law 8), every doer leashed — a passing run costs five comments and five
-minutes, pushes nothing, and consumes no paid reviews (`@coderabbitai help`
-answers without spending a review; Claude Code's paid reviewer is deliberately
-not probed).
+minutes and consumes no paid reviews (`@coderabbitai help` answers without
+spending a review; Claude Code's paid reviewer is deliberately not probed).
+The leashes make a clean run push nothing — but a leash is a request, not a
+restraint (Law 2), and the triage table below anticipates exactly that break:
+on a branch that can't absorb a surprise commit, have branch protection in
+place before probing the doers.
 
 | # | Probe (post verbatim, one comment each) | Connected looks like |
 |---|---|---|
