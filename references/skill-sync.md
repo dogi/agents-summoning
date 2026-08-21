@@ -38,8 +38,9 @@ means that skill simply doesn't load that session — run
   stored target with `readlink <link> | od -c` — a trailing `\n` (from
   generating the link via echo/printf instead of `ln -s`) makes it point at a
   filename ending in an invisible newline. Recreate with `ln -s`. Field-tested
-  2026-08-09: `kotlin-importing.py`'s plugin symlink shipped with exactly this
-  defect while its sibling `SKILL.md` link was clean.
+  2026-08-09 in the sister repo `dogi/kotlin-importing` (not a file here): its
+  `kotlin-importing.py` plugin symlink shipped with exactly this defect while
+  the adjacent `SKILL.md` link was clean.
 
 ## Skill-authoring traps (field-tested)
 

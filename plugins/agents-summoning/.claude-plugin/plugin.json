@@ -1,7 +1,7 @@
 {
   "name": "agents-summoning",
   "description": "Adds a summoning skill: how each AI agent (CodeRabbit, Codex, Copilot, Devin, OpenHands, Jules, Claude Code, Dependabot) is summoned on a PR or issue, what it does, which file binds it — and the laws that keep a doer mention from pushing commits you didn't ask for.",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "author": {
     "name": "dogi"
   }
