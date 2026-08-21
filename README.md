@@ -129,11 +129,3 @@ target repo configures `merge`/`rebase` update modes, and the submodule sits on
 a detached HEAD). Bonus: `.agents/skills` is also one of Copilot's project
 skill directories (alongside `.github/skills` and `.claude/skills`), so the
 same submodule serves Copilot's coding agent with no extra wiring.
-
-## Sister skills
-
-Same structure, same marketplace pattern:
-
-- [dogi/kotlin-importing](https://github.com/dogi/kotlin-importing) — sort/clean Kotlin imports
-- [dogi/merge-prepping](https://github.com/dogi/merge-prepping) — rewrite PR titles into OLE house style
-- [dogi/branch-overtaking](https://github.com/dogi/branch-overtaking) — adopt an existing branch and PR
