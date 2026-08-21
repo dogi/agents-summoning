@@ -16,10 +16,11 @@ the two match only while the pin is current, so bump the submodule after every
 skill-repo merge:
 
 ```bash
-git submodule update --remote -- .agents/skills/<name>
+git submodule update --remote --checkout -- .agents/skills/<name>
 ```
 
-then commit the gitlink — checkout mode, not `--merge`: the submodule sits on a
+then commit the gitlink — `--checkout` forces the mode the pin needs even where
+the target repo configures `merge`/`rebase`: the submodule sits on a
 detached HEAD. And the load is best-effort on fresh offline sessions:
 `.openhands/setup.sh` is deliberately non-fatal, so an uninitialized submodule
 means that skill simply doesn't load that session — run

@@ -113,7 +113,7 @@ Bump the pin after every merge here, or OpenHands keeps seeing the old revision
 while Claude Code's marketplace fetch tracks this repo's `main` tip:
 
 ```bash
-git submodule update --remote -- .agents/skills/agents-summoning
+git submodule update --remote --checkout -- .agents/skills/agents-summoning
 ```
 
 See `references/skill-sync.md` for the full picture — it is the spellbook's own
