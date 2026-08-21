@@ -1,0 +1,14 @@
+{
+  "name": "summoning",
+  "owner": {
+    "name": "dogi",
+    "email": "dogi@users.noreply.github.com"
+  },
+  "plugins": [
+    {
+      "name": "agents-summoning",
+      "source": "./plugins/agents-summoning",
+      "description": "Summon other AI agents (CodeRabbit, Codex, Copilot, Devin, OpenHands, Jules, Claude Code, Dependabot) on PRs and issues: pick the right agent, leash the doers, and know what to expect back."
+    }
+  ]
+}
