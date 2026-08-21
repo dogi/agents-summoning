@@ -98,9 +98,10 @@ allowlist covers):
 ```
 
 Commit that to each repo where you want the skill available in web sessions.
-The skill itself stays maintained here — bump `version` in `plugin.json` on each
-release as a revision label; Claude Code's marketplace fetch tracks this repo's
-`main` tip, so the tip is what installs pick up.
+The skill itself stays maintained here — bump `version` in `plugin.json` on
+each release: with a `version` field present, existing installs only pick up
+changes when it is bumped (fresh installs always fetch the `main` tip, and
+omitting `version` entirely would switch update detection to commit SHAs).
 
 ## Use it from OpenHands
 
