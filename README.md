@@ -20,23 +20,28 @@ The skill keeps the spellbook's layering:
 |---|---|---|
 | **The Grid** — how each agent is summoned, what it does, which file binds it | `SKILL.md` | any repo these agents are installed on |
 | **The Laws of Summoning** — blast radius, leashes, backtick trap, silence diagnosis, timeline auditing, cost | `SKILL.md` | portable |
-| **Field notes** — dated observations with receipts | `references/field-notes.md` | grow your own per repo |
+| **Field notes** — dated observations with receipts | `NOTES.md` | grow your own per repo |
 | **The Skill Sync** — one skill repo feeding Claude Code, OpenHands, and Copilot | `references/skill-sync.md` | portable |
 
 ## Structure
 
 ```
 SKILL.md                                 # the grid, the laws, choosing an agent, casting procedure
+NOTES.md                                 # the history: dated evidence behind the grid (myplanet experiments)
 references/
-├── field-notes.md                       # dated evidence behind the grid (myplanet experiments)
 └── skill-sync.md                        # maintaining shared skills across Claude Code / OpenHands / Copilot
 .claude-plugin/marketplace.json          # marketplace catalog
 plugins/agents-summoning/
 ├── .claude-plugin/plugin.json           # plugin manifest
 └── skills/summoning/
     ├── SKILL.md      -> ../../../../SKILL.md
+    ├── NOTES.md      -> ../../../../NOTES.md
     └── references    -> ../../../../references
 ```
+
+`SKILL.md` stays timeless — mechanics only, each claim pointing at `NOTES.md`
+for its receipts. New evidence goes in `NOTES.md`; the grid changes only when
+behavior does.
 
 The repo root doubles as a skill directory so it works when mounted as a git
 submodule (at `.agents/skills/agents-summoning/`); the two symlinks under

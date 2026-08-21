@@ -9,14 +9,13 @@ description: 'Summon another AI agent — CodeRabbit, Codex, Copilot, Devin, Ope
 commits on your branch. That's the one distinction to hold before casting
 anything.
 
-This skill has two layers. **The Grid** is the timeless mechanics: how each
-agent is summoned, what it does, and which file binds it — portable to any repo
-these agents are installed on. **Field notes**
-(`references/field-notes.md`) are dated observations with receipts, mostly from
-the live multi-agent experiment on
-[myplanet PR #15436](https://github.com/open-learning-exchange/myplanet/pull/15436)
-(2026-08-07/08), where each agent also fact-checked its own row. New evidence
-goes in the notes; the grid changes only when behavior does. A third layer,
+This skill has two layers. **The Grid** below is the timeless mechanics: how
+each agent is summoned, what it does, and which file binds it — portable to any
+repo these agents are installed on. The history — dated observations with
+receipts, from the live experiments where each agent fact-checked its own grid
+row — lives in **`NOTES.md`** next to this file. New evidence goes in the
+notes; the grid changes only when behavior does, so read `NOTES.md` whenever a
+grid row surprises you or you need the evidence behind a claim. A third layer,
 **The Skill Sync** (`references/skill-sync.md`), is the plumbing that arms the
 doers: how shared skills are maintained once in their own repos and synced into
 Claude Code, OpenHands, and Copilot.
@@ -29,9 +28,9 @@ Claude Code, OpenHands, and Copilot.
 | **Codex** (`chatgpt-codex-connector[bot]`) | Reviewer (+ cloud tasks) | `@codex review` · targeted: `@codex review for issues in <scope>` — 👀 ack in seconds, review in minutes, 👍 if clean. Auto-review on open/ready only if enabled in repo Codex settings | no — `@codex fix it` / `address that feedback` starts a cloud task that may update the PR **or** deliver a sibling branch/PR | `## Code Review Rules` in `AGENTS.md`; `codex` label, `*-codex/*` branches |
 | **Copilot** (`Copilot` / `copilot-swe-agent`; Reviewers-UI reviews author as `copilot-pull-request-reviewer[bot]`) | Doer, instruction-following | `@copilot <ask>` (write-access users only) · Reviewers UI (Comment-only reviews — never approves, no auto re-review) · assign an issue (spawns its own `copilot/**` PR). Acks in ~30 s | **default** — mentions work on any PR and push to that branch; say "open a separate PR" to redirect | coding agent: `.github/copilot-instructions.md` + nearest `AGENTS.md`, with a root `CLAUDE.md`/`GEMINI.md` as the alternative (an `AGENTS.md` takes precedence and unbinds `CLAUDE.md`); code review: `AGENTS.md` but not `CLAUDE.md` |
 | **Devin** (`devin-ai-integration[bot]`) | Doer, instruction-following | `@devin <ask>` — session link in ~10 s; one session **adopts** the PR, later mentions join it (no races from Devin). Reviews: the bare literal **`@devin review`** triggers Devin Review in ~1 min — verbose review asks (`@devin please review — comment only…`) go **silent**, and "additional findings" are gated behind its web UI | yes, unless leashed in the mention | Knowledge ingests `CLAUDE.md`/`AGENTS.md`; ⚠️ commit identity is a configurable "commit authoring mode" — audit via PR timeline, not `git log` |
-| **OpenHands** (`openhands-ai[bot]`) | Doer, unleashable | `@openhands <ask>` · `openhands` label on an issue — "I'm on it!" + session link in ~10 s; **new session per mention**, and *any* mention (even "help") reads as "fix what's open" | yes — leash compliance is **mixed**: broke an explicit no-push once (2026-08-07), honored "comment only" three times running (2026-08-09); see field notes | root `AGENTS.md` (auto-loaded memory) + skills from `.agents/skills/*/SKILL.md` (submodules, bootstrapped by `.openhands/setup.sh` — see The Skill Sync); `.openhands/microagents/repo.md` also supported. All prompt-level, not a guardrail; commits authored `openhands` |
+| **OpenHands** (`openhands-ai[bot]`) | Doer, unleashable | `@openhands <ask>` · `openhands` label on an issue — "I'm on it!" + session link in ~10 s; **new session per mention**, and *any* mention (even "help") reads as "fix what's open" | yes — leash compliance is **mixed**: has both broken and honored explicit no-push leashes (see `NOTES.md`) | root `AGENTS.md` (auto-loaded memory) + skills from `.agents/skills/*/SKILL.md` (submodules, bootstrapped by `.openhands/setup.sh` — see The Skill Sync); `.openhands/microagents/repo.md` also supported. All prompt-level, not a guardrail; commits authored `openhands` |
 | **Jules** (`google-labs-jules[bot]`) | Issue-driven Doer | `jules` label on an issue (reliable) / Jules app. PR feedback only on **Jules-created PRs** via a submitted review (👀 ack per comment, then pushes fixes); acts on every review comment by default — opt-in Reactive Mode **narrows** that to explicit `@Jules` mentions. Mentions on foreign PRs go silent (no session owns the branch) | own `jules-*` PRs only — including follow-up commits there on accepted review feedback | `AGENTS.md` + per-repo memory (no `CLAUDE.md` support); configurable commit-authoring modes — audit via PR timeline; quotas 15/100/300 tasks/day by plan |
-| **Claude Code** (`claude[bot]` for reviews) | Session Doer + managed Reviewer | claude.ai/code session · `@claude review` **only where the repo has managed Code Review enabled and funded** — it bills $15–25/review against org overage credits, so check the repo's policy first (myplanet retired it after a single $22.60 zero-finding review; see field notes) | review: no, comments only; sessions: their own `claude/**` branch (session-ID suffix; first push with `git push -u`) | sessions read `CLAUDE.md`; can subscribe to PR events and drive to green; review model is server-side and undocumented, not admin-configurable |
+| **Claude Code** (`claude[bot]` for reviews) | Session Doer + managed Reviewer | claude.ai/code session · `@claude review` **only where the repo has managed Code Review enabled and funded** — it bills $15–25/review against org overage credits, so check the repo's policy first (see `NOTES.md` for what one uncapped summon cost) | review: no, comments only; sessions: their own `claude/**` branch (session-ID suffix; first push with `git push -u`) | sessions read `CLAUDE.md`; can subscribe to PR events and drive to green; review model is server-side and undocumented, not admin-configurable |
 | **Dependabot** (`dependabot[bot]`) | Scheduled | scheduled runs · `@dependabot rebase` / `recreate` / `ignore …` / `unignore …` / `show … ignore conditions` — on **its own PRs only** | own PRs | `.github/dependabot.yml` |
 
 Config-dependent cells — CodeRabbit's chattiness and `approve` availability,
@@ -47,10 +46,10 @@ from the vendor default. Read the repo's config before promising behavior.
    itself: *"comment only — do not push"*.
 2. **A leash is a request, not a restraint.** No vendor documents a hard
    "never push" switch — every standing-rule mechanism (microagents, Knowledge,
-   `AGENTS.md`) is prompt-level context. OpenHands broke an explicit no-push
-   once and honored it three times running two days later. The enforceable
-   controls are GitHub-side: branch protection/rulesets and app write
-   permissions.
+   `AGENTS.md`) is prompt-level context, and OpenHands has both broken and
+   honored explicit no-push leashes (`NOTES.md` has the receipts). The
+   enforceable controls are GitHub-side: branch protection/rulesets and app
+   write permissions.
 3. **Backticks don't defuse a mention.** Writing `` `@openhands prepping` ``
    inside a code span still spawns a real (unleashed!) session — GitHub
    notifies on the handle regardless of code formatting. When *talking about*
@@ -77,8 +76,8 @@ from the vendor default. Read the repo's config before promising behavior.
    double-posts under both the mentioning user's account and the bot.
 7. **Mind the bill.** Managed reviewers can cost real money per summon
    (Claude Code managed review: $15–25/review against non-refundable org
-   overage credits, and a spend cap does not stop a mid-process review). When
-   free reviewers cover the same ground, prefer them.
+   overage credits, and a spend cap does not stop a mid-process review — see
+   `NOTES.md`). When free reviewers cover the same ground, prefer them.
 8. **One summon, one job.** Scope targeted asks (`@codex review for issues in
    <file>` is honored precisely). Don't stack multiple agent mentions in one
    comment — each one fires.
@@ -88,14 +87,13 @@ from the vendor default. Read the repo's config before promising behavior.
 - **Fresh review of a PR** — CodeRabbit reviews pushes automatically;
   `@coderabbitai review` forces one only when auto-reviews are paused (against
   an already-reviewed commit it replies "Already reviewed"). `@codex review`
-  was the strongest single-finding reviewer of the experiment — it caught a
-  `lateinit` crash hazard *after* another reviewer had approved the commit.
-  For a scoped second opinion: `@codex review for issues in <scope>`.
+  is the strongest single-finding reviewer on record (`NOTES.md`). For a
+  scoped second opinion: `@codex review for issues in <scope>`.
 - **Fix on the current branch** — `@copilot <ask>` (default pushes; ~30 s
   ack), `@devin <ask>` (session adopts the PR; later mentions join it), or
   `@openhands <ask>`. OpenHands' edge is that it will actually *run* things —
-  ask it to **verify by running**, not just review; it live-tested a skill in
-  the target environment and caught two discovery failures reviewers missed.
+  ask it to **verify by running**, not just review; it has caught failures in
+  the live environment that pure reviewers missed (`NOTES.md`).
 - **Work from an issue** — assign the issue to Copilot (spawns its own
   `copilot/**` PR), or apply the `jules` / `openhands` label.
 - **Dependency PRs** — `@dependabot rebase` / `recreate` / the
@@ -150,7 +148,7 @@ from the vendor default. Read the repo's config before promising behavior.
 
 ## Vendor grimoires
 
-Official references; the grid and field notes record observed behavior where
+Official references; the grid and `NOTES.md` record observed behavior where
 the two differ.
 
 - CodeRabbit: [review commands](https://docs.coderabbit.ai/reference/review-commands) · [configuration](https://docs.coderabbit.ai/reference/configuration) · [learnings](https://docs.coderabbit.ai/knowledge-base/learnings) — `@coderabbitai configuration` prints the repo's live config
@@ -162,11 +160,11 @@ the two differ.
 - Claude Code: [Code Review](https://code.claude.com/docs/en/code-review) (managed; admin settings at claude.ai/admin-settings/claude-code)
 - Dependabot: [comment commands](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-pull-request-comment-commands)
 
-## Field notes and the Skill Sync
+## Notes and the Skill Sync
 
-The dated evidence behind the grid lives in `references/field-notes.md` —
-read it when a grid row surprises you, and append new dated observations there
-rather than editing the grid; the grid changes only when behavior does.
+The dated evidence behind the grid lives in `NOTES.md` — read it when a grid
+row surprises you, and append new dated observations there rather than editing
+the grid; the grid changes only when behavior does.
 `references/skill-sync.md` covers how shared skills like this one are
 maintained once and loaded by Claude Code, OpenHands, and Copilot from a single
 source of truth.
