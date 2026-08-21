@@ -27,8 +27,44 @@ walk this checklist. Two facts frame all of it:
 | **Claude Code** | sessions via [claude.ai/code](https://claude.ai/code) with the GitHub connector granted this repo; managed `@claude review` needs enabling **and funding** at claude.ai/admin-settings/claude-code | a session can read and push; for managed review check the admin page before summoning (Law 7) | silence, or a "review skipped" reply at the spend limit |
 | **Dependabot** | commit `.github/dependabot.yml` | scheduled PRs appear on the configured cadence | no PRs, ever |
 
-## After connecting
+## The connecting test
 
-The first successful summon per agent is worth a dated line in `NOTES.md` —
-what fired, how fast, under what identity — so the next silence can be compared
-against a known-good baseline instead of guesswork.
+A repeatable probe run that turns the checklist above into a verdict. Cast it
+on an **open PR you own**: one probe per agent, **each in its own comment**
+(Law 8), every doer leashed — a passing run costs five comments and five
+minutes, pushes nothing, and consumes no paid reviews (`@coderabbitai help`
+answers without spending a review; Claude Code's paid reviewer is deliberately
+not probed).
+
+| # | Probe (post verbatim, one comment each) | Connected looks like |
+|---|---|---|
+| 1 | `@coderabbitai help` | command-list reply within ~1 min |
+| 2 | `@codex review` | 👀 within ~1 min; a review or 👍 follows |
+| 3 | `@copilot are you connected? Comment only, do not push.` | 👀 in seconds, answer in ~30 s–2 min |
+| 4 | `/devin review` | "Starting Devin Review" within ~1 min |
+| 5 | `@openhands are you connected? Comment only — do not push anything.` | "I'm on it!" + session link in ~10 s, then an answer comment |
+
+Close the window at **5 minutes** — every connected agent's first reaction
+landed well inside that in the field test (2026-08-21). Three agents are
+deliberately **not probeable by comment**: Jules (mentions are dead on every
+surface, and its only summon — the `jules` label — means "implement this
+issue"; verify in the Jules app instead), Claude Code's managed review (a
+probe bills real money — Law 7; check claude.ai/admin-settings/claude-code),
+and Dependabot (check `.github/dependabot.yml` and the repo's Insights tab).
+
+### Triage
+
+| Outcome inside the window | Diagnosis | Fix |
+|---|---|---|
+| Ack or answer | Connected ✔ | Record the baseline (below) |
+| Perfect silence | Not installed, or installed for the org but not granted this repo — personal repos need their own grant | The checklist above; re-probe once after granting |
+| Silence, but the app *is* installed | Rate limit (CodeRabbit posts banners — look for them), a brittle trigger form (Devin's `@`-review), or a surface the agent doesn't serve | The surfaces table in `SKILL.md`; re-probe with the exact form above, then Law 5 |
+| Loud error ("Failed to start…", "unexpected error starting the job") | Outage — the kind that announces itself | Retry the identical probe once, later; never reword (Law 5) |
+| A signup/connect bounce (Codex: "create a Codex account and connect to github") | The repo lane is connected; the *asker's* account is not | Connect the account it links; the review lane works meanwhile |
+| The doer pushed despite the leash | Connected but ungoverned | Law 2 — branch protection and app write permissions, not better phrasing |
+
+### Record the baseline
+
+A passing probe per agent is worth a dated line in `NOTES.md` — what fired,
+how fast, under what identity — so the next silence can be compared against a
+known-good baseline instead of guesswork.
