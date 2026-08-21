@@ -28,7 +28,7 @@ silent.
 | **CodeRabbit** (`coderabbitai[bot]`) | Reviewer | auto on push (skips drafts & dependabot; auto-pauses after 5 reviewed commits) · `@coderabbitai review` / `full review` / `resolve` / `approve` (needs `reviews.request_changes_workflow: true`) / `fix ci [commit]` / `autofix [stacked pr]` / `resolve merge conflict` / `generate {docstrings, unit tests, sequence diagram}` / `configuration` / `pause`·`resume` / `help` — `ignore` only works in the PR **description**. Answers in minutes; chats in threads | only opt-in (`fix ci commit`, `autofix`, generators) | teachable per-repo **learnings** from PR discussion; config via `.coderabbit.yaml` — can ingest `CLAUDE.md` as code guidelines (`knowledge_base.code_guidelines`) |
 | **Codex** (`chatgpt-codex-connector[bot]`) | Reviewer (+ cloud tasks) | `@codex review` · targeted: `@codex review for issues in <scope>` — 👀 ack in seconds, review in minutes, 👍 if clean. Auto-review on open/ready only if enabled in repo Codex settings | no — `@codex fix it` / `address that feedback` starts a cloud task that may update the PR **or** deliver a sibling branch/PR | `## Code Review Rules` in `AGENTS.md`; `codex` label, `*-codex/*` branches |
 | **Copilot** (`Copilot` / `copilot-swe-agent`; Reviewers-UI reviews author as `copilot-pull-request-reviewer[bot]`) | Doer, instruction-following | `@copilot <ask>` (write-access users only) · Reviewers UI (Comment-only reviews — never approves, no auto re-review) · assign an issue (spawns its own `copilot/**` PR). Acks in ~30 s | **default on same-repository PRs** — mentions push to that branch; fork-origin PRs are unsupported; say "open a separate PR" to redirect | coding agent: `.github/copilot-instructions.md` + nearest `AGENTS.md`, with a root `CLAUDE.md`/`GEMINI.md` as the alternative (an `AGENTS.md` takes precedence and unbinds `CLAUDE.md`); code review: `AGENTS.md` but not `CLAUDE.md` |
-| **Devin** (`devin-ai-integration[bot]`) | Doer, instruction-following | `@devin <ask>` — session link in ~10 s; one session **adopts** the PR, later mentions join it (no races from Devin). Reviews: the bare literal **`@devin review`** triggers Devin Review in ~1 min — verbose review asks (`@devin please review — comment only…`) go **silent**, and "additional findings" are gated behind its web UI | yes, unless leashed in the mention | Knowledge ingests `CLAUDE.md`/`AGENTS.md`; ⚠️ commit identity is a configurable "commit authoring mode" — audit via PR timeline, not `git log` |
+| **Devin** (`devin-ai-integration[bot]`) | Doer, instruction-following | `@devin <ask>` — session link in ~10 s; one session **adopts** the PR, later mentions join it (no races from Devin). Reviews: **`/devin review`** triggers Devin Review in seconds and tolerates trailing text; the `@devin review` mention form goes **silent** with any extra text in the comment (receipts in `NOTES.md`), and "additional findings" are gated behind its web UI — a session can relay them | yes, unless leashed in the mention | Knowledge ingests `CLAUDE.md`/`AGENTS.md`; ⚠️ commit identity is a configurable "commit authoring mode" — audit via PR timeline, not `git log` |
 | **OpenHands** (`openhands-ai[bot]`) | Doer, unleashable | `@openhands <ask>` · `openhands` label on an issue — "I'm on it!" + session link in ~10 s; **new session per mention**, and *any* mention (even "help") reads as "fix what's open" | yes — leash compliance is **mixed**: has both broken and honored explicit no-push leashes (see `NOTES.md`) | root `AGENTS.md` (auto-loaded memory) + skills from `.agents/skills/*/SKILL.md` (submodules, bootstrapped by `.openhands/setup.sh` — wiring in this repo's README); `.openhands/microagents/repo.md` also supported. All prompt-level, not a guardrail; commits authored `openhands` |
 | **Jules** (`google-labs-jules[bot]`) | Issue-driven Doer | `jules` label on an issue (reliable) / Jules app. PR feedback only on **Jules-created PRs** via a submitted review (👀 ack per comment, then pushes fixes); acts on every review comment by default — opt-in Reactive Mode **narrows** that to explicit `@Jules` mentions. Mentions on foreign PRs go silent (no session owns the branch) | own `jules-*` PRs only — including follow-up commits there on accepted review feedback | `AGENTS.md` + per-repo memory (no `CLAUDE.md` support); configurable commit-authoring modes — audit via PR timeline; quotas 15/100/300 tasks/day by plan |
 | **Claude Code** (`claude[bot]` for reviews) | Session Doer + managed Reviewer | claude.ai/code session · `@claude review` **only where the repo has managed Code Review enabled and funded** — it bills $15–25/review against org overage credits, so check the repo's policy first (see `NOTES.md` for what one uncapped summon cost) | review: no, comments only; sessions: their own `claude/**` branch (session-ID suffix; first push with `git push -u`) | sessions read `CLAUDE.md`; can subscribe to PR events and drive to green; review model is server-side and undocumented, not admin-configurable |
@@ -38,6 +38,24 @@ Config-dependent cells — CodeRabbit's chattiness and `approve` availability,
 Codex auto-review, Claude Code managed review — come from the target repo's own
 config (`.coderabbit.yaml`, Codex repo settings, claude.ai admin settings), not
 from the vendor default. Read the repo's config before promising behavior.
+
+## The surfaces — where a summon lands at all
+
+The grid says how each agent behaves; this table says which page even reaches
+it. Field-tested 2026-08-21, one summon per cell, receipts in `NOTES.md` —
+and every ✖ assumes the agent is connected (`references/connecting.md`),
+because not-connected is ✖ everywhere, silently.
+
+| Agent | PR: review | PR: chat ask | Issue: mention | Issue: label / assign |
+|---|---|---|---|---|
+| **CodeRabbit** | ✔ auto + commands | ✔ answers in-thread | ✔ answers | — |
+| **Codex** | ✔ `@codex review` | ⚠ needs the asker's connected Codex account (bounces with a signup link otherwise) | ✔ answered here, account-routed | — |
+| **Copilot** | ✔ mention-ask · Reviewers UI (comment-only) | ✔ ~30 s | ✖ silent | ✔ assign → its own `copilot/**` PR |
+| **Devin** | ✔ `/devin review` only | ✔ `@devin <ask>` session | ✖ silent, both forms | ✖ |
+| **OpenHands** | ✔ session per mention | ✔ | ✔ | ✔ `openhands` label → doer session |
+| **Jules** | ✖ (reviews only its own PRs) | ✖ | ✖ | ✔ `jules` label — and it means "implement this issue" |
+| **Claude Code** | ✔ managed review where enabled **and funded** | — (sessions live at claude.ai/code, not in mentions) | — | — |
+| **Dependabot** | ✔ commands on its own PRs | — | — | — (schedule-driven via config) |
 
 ## The Laws of Summoning
 
@@ -113,7 +131,8 @@ from the vendor default. Read the repo's config before promising behavior.
 
 1. **Identify the job**: review, fix on this branch, issue-driven work, or a
    dependency-PR command. That picks the column of the grid you care about.
-2. **Pick the agent** from the grid and the guide above. For the
+2. **Pick the agent** from the grid and the guide above, and confirm the page
+   you're casting on actually reaches it (the surfaces table). For the
    config-dependent rows, check the target repo's config
    (`.coderabbit.yaml`, `@coderabbitai configuration` prints the live one)
    before promising behavior.
