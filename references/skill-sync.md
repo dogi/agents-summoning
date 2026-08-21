@@ -35,7 +35,9 @@ means that skill simply doesn't load that session — run
   present after `git submodule update --init`, on any machine or VM.
 - **Internal symlinks** (inside the skill repo) normally resolve on every
   checkout, since target and link travel together. If one doesn't, check the
-  stored target with `readlink <link> | od -c` — a trailing `\n` (from
+  stored target with `readlink -n <link> | od -c` (`-n` matters: without it,
+  `readlink` appends its own newline and every target looks tainted) — a
+  trailing `\n` (from
   generating the link via echo/printf instead of `ln -s`) makes it point at a
   filename ending in an invisible newline. Recreate with `ln -s`. Field-tested
   2026-08-09 in the sister repo `dogi/kotlin-importing` (not a file here): its

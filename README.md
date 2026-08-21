@@ -25,7 +25,7 @@ The skill keeps the spellbook's layering:
 
 ## Structure
 
-```
+```text
 SKILL.md                                 # the grid, the laws, choosing an agent, casting procedure
 NOTES.md                                 # the history: dated evidence behind the grid (myplanet experiments)
 references/
@@ -62,7 +62,7 @@ can discover it when the repo is added as a marketplace.
 
 ## Use it in the terminal (CLI)
 
-```
+```text
 /plugin marketplace add dogi/agents-summoning
 /plugin install agents-summoning@summoning
 /reload-plugins
