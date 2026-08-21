@@ -44,7 +44,7 @@ for its receipts. New evidence goes in `NOTES.md`; the grid changes only when
 behavior does.
 
 The repo root doubles as a skill directory so it works when mounted as a git
-submodule (at `.agents/skills/agents-summoning/`); the two symlinks under
+submodule (at `.agents/skills/agents-summoning/`); the three symlinks under
 `plugins/` project the same files onto Claude Code's plugin path.
 
 ⚠️ **Those symlinks need `core.symlinks=true`.** Where Git runs without it —

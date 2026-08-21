@@ -9,14 +9,14 @@ description: 'Summon another AI agent — CodeRabbit, Codex, Copilot, Devin, Ope
 commits on your branch. That's the one distinction to hold before casting
 anything.
 
-This skill has two layers. **The Grid** below is the timeless mechanics: how
+This skill has three layers. **The Grid** below is the timeless mechanics: how
 each agent is summoned, what it does, and which file binds it — portable to any
 repo these agents are installed on. The history — dated observations with
 receipts, from the live experiments where each agent fact-checked its own grid
 row — lives in **`NOTES.md`** next to this file. New evidence goes in the
 notes; the grid changes only when behavior does, so read `NOTES.md` whenever a
-grid row surprises you or you need the evidence behind a claim. A third layer,
-**The Skill Sync** (`references/skill-sync.md`), is the plumbing that arms the
+grid row surprises you or you need the evidence behind a claim. The third
+layer, **The Skill Sync** (`references/skill-sync.md`), is the plumbing that arms the
 doers: how shared skills are maintained once in their own repos and synced into
 Claude Code, OpenHands, and Copilot.
 
