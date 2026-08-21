@@ -26,7 +26,7 @@ Claude Code, OpenHands, and Copilot.
 |---|---|---|---|---|
 | **CodeRabbit** (`coderabbitai[bot]`) | Reviewer | auto on push (skips drafts & dependabot; auto-pauses after 5 reviewed commits) · `@coderabbitai review` / `full review` / `resolve` / `approve` (needs `reviews.request_changes_workflow: true`) / `fix ci [commit]` / `autofix [stacked pr]` / `resolve merge conflict` / `generate {docstrings, unit tests, sequence diagram}` / `configuration` / `pause`·`resume` / `help` — `ignore` only works in the PR **description**. Answers in minutes; chats in threads | only opt-in (`fix ci commit`, `autofix`, generators) | teachable per-repo **learnings** from PR discussion; config via `.coderabbit.yaml` — can ingest `CLAUDE.md` as code guidelines (`knowledge_base.code_guidelines`) |
 | **Codex** (`chatgpt-codex-connector[bot]`) | Reviewer (+ cloud tasks) | `@codex review` · targeted: `@codex review for issues in <scope>` — 👀 ack in seconds, review in minutes, 👍 if clean. Auto-review on open/ready only if enabled in repo Codex settings | no — `@codex fix it` / `address that feedback` starts a cloud task that may update the PR **or** deliver a sibling branch/PR | `## Code Review Rules` in `AGENTS.md`; `codex` label, `*-codex/*` branches |
-| **Copilot** (`Copilot` / `copilot-swe-agent`; Reviewers-UI reviews author as `copilot-pull-request-reviewer[bot]`) | Doer, instruction-following | `@copilot <ask>` (write-access users only) · Reviewers UI (Comment-only reviews — never approves, no auto re-review) · assign an issue (spawns its own `copilot/**` PR). Acks in ~30 s | **default** — mentions work on any PR and push to that branch; say "open a separate PR" to redirect | coding agent: `.github/copilot-instructions.md` + nearest `AGENTS.md`, with a root `CLAUDE.md`/`GEMINI.md` as the alternative (an `AGENTS.md` takes precedence and unbinds `CLAUDE.md`); code review: `AGENTS.md` but not `CLAUDE.md` |
+| **Copilot** (`Copilot` / `copilot-swe-agent`; Reviewers-UI reviews author as `copilot-pull-request-reviewer[bot]`) | Doer, instruction-following | `@copilot <ask>` (write-access users only) · Reviewers UI (Comment-only reviews — never approves, no auto re-review) · assign an issue (spawns its own `copilot/**` PR). Acks in ~30 s | **default on same-repository PRs** — mentions push to that branch; fork-origin PRs are unsupported; say "open a separate PR" to redirect | coding agent: `.github/copilot-instructions.md` + nearest `AGENTS.md`, with a root `CLAUDE.md`/`GEMINI.md` as the alternative (an `AGENTS.md` takes precedence and unbinds `CLAUDE.md`); code review: `AGENTS.md` but not `CLAUDE.md` |
 | **Devin** (`devin-ai-integration[bot]`) | Doer, instruction-following | `@devin <ask>` — session link in ~10 s; one session **adopts** the PR, later mentions join it (no races from Devin). Reviews: the bare literal **`@devin review`** triggers Devin Review in ~1 min — verbose review asks (`@devin please review — comment only…`) go **silent**, and "additional findings" are gated behind its web UI | yes, unless leashed in the mention | Knowledge ingests `CLAUDE.md`/`AGENTS.md`; ⚠️ commit identity is a configurable "commit authoring mode" — audit via PR timeline, not `git log` |
 | **OpenHands** (`openhands-ai[bot]`) | Doer, unleashable | `@openhands <ask>` · `openhands` label on an issue — "I'm on it!" + session link in ~10 s; **new session per mention**, and *any* mention (even "help") reads as "fix what's open" | yes — leash compliance is **mixed**: has both broken and honored explicit no-push leashes (see `NOTES.md`) | root `AGENTS.md` (auto-loaded memory) + skills from `.agents/skills/*/SKILL.md` (submodules, bootstrapped by `.openhands/setup.sh` — see The Skill Sync); `.openhands/microagents/repo.md` also supported. All prompt-level, not a guardrail; commits authored `openhands` |
 | **Jules** (`google-labs-jules[bot]`) | Issue-driven Doer | `jules` label on an issue (reliable) / Jules app. PR feedback only on **Jules-created PRs** via a submitted review (👀 ack per comment, then pushes fixes); acts on every review comment by default — opt-in Reactive Mode **narrows** that to explicit `@Jules` mentions. Mentions on foreign PRs go silent (no session owns the branch) | own `jules-*` PRs only — including follow-up commits there on accepted review feedback | `AGENTS.md` + per-repo memory (no `CLAUDE.md` support); configurable commit-authoring modes — audit via PR timeline; quotas 15/100/300 tasks/day by plan |
@@ -80,7 +80,8 @@ from the vendor default. Read the repo's config before promising behavior.
    `NOTES.md`). When free reviewers cover the same ground, prefer them.
 8. **One summon, one job.** Scope targeted asks (`@codex review for issues in
    <file>` is honored precisely). Don't stack multiple agent mentions in one
-   comment — each one fires.
+   comment — GitHub notifies every mentioned handle (Law 3), so expect each to
+   fire.
 
 ## Choosing the agent
 
@@ -127,7 +128,7 @@ from the vendor default. Read the repo's config before promising behavior.
 
 - **No vendor documents a hard "never push" switch** — every standing-rule
   mechanism (microagents, Knowledge, `AGENTS.md`) is prompt-level context, and
-  Law 1 (scope your summons) is best-effort, not enforcement. The enforceable
+  a leash in the mention (Law 1) is best-effort, not enforcement. The enforceable
   controls are GitHub-side — branch protection/rulesets and app/repository
   write permissions.
 - **Copilot and Devin ingest `CLAUDE.md` directly** (Copilot's coding agent

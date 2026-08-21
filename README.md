@@ -10,7 +10,8 @@ Harvested from
 [open-learning-exchange/myplanet `docs/AGENT_SPELLBOOK.md`](https://github.com/open-learning-exchange/myplanet/blob/master/docs/AGENT_SPELLBOOK.md),
 where the grid was fact-checked live by the agents themselves
 ([PR #15436](https://github.com/open-learning-exchange/myplanet/pull/15436),
-2026-08-07/08). The one distinction the skill exists to enforce: **Reviewers
+2026-08-07/08; follow-up [PR #15499](https://github.com/open-learning-exchange/myplanet/pull/15499),
+2026-08-09). The one distinction the skill exists to enforce: **Reviewers
 speak; Doers act** — an unleashed Doer mention defaults to commits on your
 branch.
 
@@ -98,7 +99,8 @@ allowlist covers):
 
 Commit that to each repo where you want the skill available in web sessions.
 The skill itself stays maintained here — bump `version` in `plugin.json` on each
-release so installs pick up updates.
+release as a revision label; Claude Code's marketplace fetch tracks this repo's
+`main` tip, so the tip is what installs pick up.
 
 ## Use it from OpenHands
 
