@@ -24,6 +24,7 @@ walk this checklist. Two facts frame all of it:
 | **Devin** | install the Devin GitHub app and enable the repo at [app.devin.ai](https://app.devin.ai); **Devin Review is a separate activation** on top of the app | `/devin review` → "Starting Devin Review" in seconds (the slash form tolerates trailing text; bare `@devin review` is brittle with any extra text); `@devin <ask>` → session link in ~10 s | silence — and once connected, review findings hide behind the web UI: ask a session to relay them |
 | **OpenHands** | install the [OpenHands Cloud app](https://app.all-hands.dev) and grant the repo | any mention → "I'm on it!" + session link in ~10 s | silence |
 | **Jules** | connect the repo in the [Jules app](https://jules.google). Mentions do **not** summon it on either surface — silent on a PR and on an issue in the same test (2026-08-21); the `jules` label on an issue is the only reliable summon, and it means "implement this issue" | apply the `jules` label to an issue you actually want implemented | silence |
+| ↳ confirmed 2026-08-21 on this repo | issue #3 labeled `jules` 10:37:50Z → Jules pushed commit `caf13cf` and opened [PR #4](https://github.com/dogi/agents-summoning/pull/4) at 10:40:55Z (~3 min, clean, base `main`, `jules-*` branch). The label did not pre-exist on the repo — creating it and POSTing it to the issue is itself the summon. ⚠️ the commit's author/committer **and** PR author all read as the human `dogi`, but `caf13cf` carries a `Co-authored-by: google-labs-jules[bot]` trailer — so the bot *does* leave a git-log signal here (audit by the `jules-*` branch name + PR timeline *plus* the co-author trailer, not author/committer). Also note `caf13cf` is an **empty** commit (tree identical to parent) — the label-summon opened the PR without new content (see `NOTES.md`) | repeat on a fresh issue | a `jules-*` branch/PR appears within minutes |
 | **Claude Code** | sessions via [claude.ai/code](https://claude.ai/code) with the GitHub connector granted this repo; managed `@claude review` needs enabling **and funding** at claude.ai/admin-settings/claude-code | a session can read and push; for managed review check the admin page before summoning (Law 7) | silence, or a "review skipped" reply at the spend limit |
 | **Dependabot** | commit `.github/dependabot.yml` | scheduled PRs appear on the configured cadence | no PRs, ever |
 
@@ -38,6 +39,16 @@ The leashes make a clean run push nothing — but a leash is a request, not a
 restraint (Law 2), and the triage table below anticipates exactly that break:
 on a branch that can't absorb a surprise commit, have branch protection in
 place before probing the doers.
+
+> ⚠️ **A doer probe is a summon, not a ping.** The OpenHands and Copilot
+> probes below don't just confirm connectivity — they **spawn real doer
+> sessions** (OpenHands one per mention, per Law 4). Field-tested 2026-08-21:
+> the `@openhands are you connected?` probe on PR #4 and on issue #3 each
+> summoned a separate OpenHands session (distinct conversation IDs) — the
+> summoner summoned itself. The leash held both times, but a leash is a
+> request, not a restraint (Law 2), so run the doer probes on a branch that
+> can absorb a surprise commit and expect a session per doer probe, not just
+> a comment back. (See `NOTES.md` → "The connection probe IS the summon".)
 
 | # | Probe (post verbatim, one comment each) | Connected looks like |
 |---|---|---|
