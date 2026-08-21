@@ -16,9 +16,10 @@ receipts, from the live experiments where each agent fact-checked its own grid
 row — lives in **`NOTES.md`** next to this file. New evidence goes in the
 notes; the grid changes only when behavior does, so read `NOTES.md` whenever a
 grid row surprises you or you need the evidence behind a claim. The third
-layer, **The Skill Sync** (`references/skill-sync.md`), is the plumbing that arms the
-doers: how shared skills are maintained once in their own repos and synced into
-Claude Code, OpenHands, and Copilot.
+layer, **Connecting** (`references/connecting.md`), navigates a summoner
+through what each agent needs installed and connected before a summon reaches
+it at all — read it first on any fresh repo, and again whenever a summon goes
+silent.
 
 ## The Grid
 
@@ -28,7 +29,7 @@ Claude Code, OpenHands, and Copilot.
 | **Codex** (`chatgpt-codex-connector[bot]`) | Reviewer (+ cloud tasks) | `@codex review` · targeted: `@codex review for issues in <scope>` — 👀 ack in seconds, review in minutes, 👍 if clean. Auto-review on open/ready only if enabled in repo Codex settings | no — `@codex fix it` / `address that feedback` starts a cloud task that may update the PR **or** deliver a sibling branch/PR | `## Code Review Rules` in `AGENTS.md`; `codex` label, `*-codex/*` branches |
 | **Copilot** (`Copilot` / `copilot-swe-agent`; Reviewers-UI reviews author as `copilot-pull-request-reviewer[bot]`) | Doer, instruction-following | `@copilot <ask>` (write-access users only) · Reviewers UI (Comment-only reviews — never approves, no auto re-review) · assign an issue (spawns its own `copilot/**` PR). Acks in ~30 s | **default on same-repository PRs** — mentions push to that branch; fork-origin PRs are unsupported; say "open a separate PR" to redirect | coding agent: `.github/copilot-instructions.md` + nearest `AGENTS.md`, with a root `CLAUDE.md`/`GEMINI.md` as the alternative (an `AGENTS.md` takes precedence and unbinds `CLAUDE.md`); code review: `AGENTS.md` but not `CLAUDE.md` |
 | **Devin** (`devin-ai-integration[bot]`) | Doer, instruction-following | `@devin <ask>` — session link in ~10 s; one session **adopts** the PR, later mentions join it (no races from Devin). Reviews: the bare literal **`@devin review`** triggers Devin Review in ~1 min — verbose review asks (`@devin please review — comment only…`) go **silent**, and "additional findings" are gated behind its web UI | yes, unless leashed in the mention | Knowledge ingests `CLAUDE.md`/`AGENTS.md`; ⚠️ commit identity is a configurable "commit authoring mode" — audit via PR timeline, not `git log` |
-| **OpenHands** (`openhands-ai[bot]`) | Doer, unleashable | `@openhands <ask>` · `openhands` label on an issue — "I'm on it!" + session link in ~10 s; **new session per mention**, and *any* mention (even "help") reads as "fix what's open" | yes — leash compliance is **mixed**: has both broken and honored explicit no-push leashes (see `NOTES.md`) | root `AGENTS.md` (auto-loaded memory) + skills from `.agents/skills/*/SKILL.md` (submodules, bootstrapped by `.openhands/setup.sh` — see The Skill Sync); `.openhands/microagents/repo.md` also supported. All prompt-level, not a guardrail; commits authored `openhands` |
+| **OpenHands** (`openhands-ai[bot]`) | Doer, unleashable | `@openhands <ask>` · `openhands` label on an issue — "I'm on it!" + session link in ~10 s; **new session per mention**, and *any* mention (even "help") reads as "fix what's open" | yes — leash compliance is **mixed**: has both broken and honored explicit no-push leashes (see `NOTES.md`) | root `AGENTS.md` (auto-loaded memory) + skills from `.agents/skills/*/SKILL.md` (submodules, bootstrapped by `.openhands/setup.sh` — wiring in this repo's README); `.openhands/microagents/repo.md` also supported. All prompt-level, not a guardrail; commits authored `openhands` |
 | **Jules** (`google-labs-jules[bot]`) | Issue-driven Doer | `jules` label on an issue (reliable) / Jules app. PR feedback only on **Jules-created PRs** via a submitted review (👀 ack per comment, then pushes fixes); acts on every review comment by default — opt-in Reactive Mode **narrows** that to explicit `@Jules` mentions. Mentions on foreign PRs go silent (no session owns the branch) | own `jules-*` PRs only — including follow-up commits there on accepted review feedback | `AGENTS.md` + per-repo memory (no `CLAUDE.md` support); configurable commit-authoring modes — audit via PR timeline; quotas 15/100/300 tasks/day by plan |
 | **Claude Code** (`claude[bot]` for reviews) | Session Doer + managed Reviewer | claude.ai/code session · `@claude review` **only where the repo has managed Code Review enabled and funded** — it bills $15–25/review against org overage credits, so check the repo's policy first (see `NOTES.md` for what one uncapped summon cost) | review: no, comments only; sessions: their own `claude/**` branch (session-ID suffix; first push with `git push -u`) | sessions read `CLAUDE.md`; can subscribe to PR events and drive to green; review model is server-side and undocumented, not admin-configurable |
 | **Dependabot** (`dependabot[bot]`) | Scheduled | scheduled runs · `@dependabot rebase` / `recreate` / `ignore …` / `unignore …` / `show … ignore conditions` — on **its own PRs only** | own PRs | `.github/dependabot.yml` |
@@ -64,8 +65,12 @@ from the vendor default. Read the repo's config before promising behavior.
    Copilot mentions only work from write-access users. Any OpenHands mention —
    even "help" — reads as "fix what's open", and each mention spawns a fresh
    session, so mentions in quick succession race each other.
-5. **Silence means outage, quota, or wrong surface — not bad phrasing.**
-   Before rewording and re-summoning, check: is the agent rate-limited
+5. **Silence means not-connected, outage, quota, or wrong surface — not bad
+   phrasing.** Before rewording and re-summoning, check first: is the agent
+   even **installed and activated on this repo**
+   (`references/connecting.md`)? An unconnected agent fails perfectly
+   silently, and personal repos need their own grant even when the org has
+   the app. Then: is the agent rate-limited
    (CodeRabbit free-OSS: 5 reviews/dev/hr rolling, banners tell you)? does it
    own this PR (Jules)? is the vendor down (Devin outages present as silence or
    "Failed to start a Devin session")? Retry later instead of rephrasing — a
@@ -161,14 +166,14 @@ the two differ.
 - Claude Code: [Code Review](https://code.claude.com/docs/en/code-review) (managed; admin settings at claude.ai/admin-settings/claude-code)
 - Dependabot: [comment commands](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-pull-request-comment-commands)
 
-## Notes and the Skill Sync
+## Notes and connecting
 
 The dated evidence behind the grid lives in `NOTES.md` — read it when a grid
 row surprises you, and append new dated observations there rather than editing
 the grid; the grid changes only when behavior does.
-`references/skill-sync.md` covers how shared skills like this one are
-maintained once and loaded by Claude Code, OpenHands, and Copilot from a single
-source of truth.
+`references/connecting.md` is the per-agent checklist for getting a summon to
+land at all — what to install, how to verify, and what "not connected" looks
+like (perfect silence).
 
 Adopting this spellbook in another repo? Take the grid, the laws, and the
 vendor links — then grow your own notes.

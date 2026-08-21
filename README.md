@@ -22,7 +22,7 @@ The skill keeps the spellbook's layering:
 | **The Grid** — how each agent is summoned, what it does, which file binds it | `SKILL.md` | any repo these agents are installed on |
 | **The Laws of Summoning** — blast radius, leashes, backtick trap, silence diagnosis, timeline auditing, cost | `SKILL.md` | portable |
 | **Field notes** — dated observations with receipts | `NOTES.md` | grow your own per repo |
-| **The Skill Sync** — one skill repo feeding Claude Code, OpenHands, and Copilot | `references/skill-sync.md` | portable |
+| **Connecting** — what each agent needs installed before a summon lands, and what "not connected" looks like | `references/connecting.md` | per account/repo |
 
 ## Structure
 
@@ -30,7 +30,7 @@ The skill keeps the spellbook's layering:
 SKILL.md                                 # the grid, the laws, choosing an agent, casting procedure
 NOTES.md                                 # the history: dated evidence behind the grid (myplanet experiments)
 references/
-└── skill-sync.md                        # maintaining shared skills across Claude Code / OpenHands / Copilot
+└── connecting.md                        # per-agent connection checklist: install, verify, silence tells
 .claude-plugin/marketplace.json          # marketplace catalog
 plugins/agents-summoning/
 ├── .claude-plugin/plugin.json           # plugin manifest
@@ -114,8 +114,7 @@ git submodule add -b main https://github.com/dogi/agents-summoning.git .agents/s
 On a fresh clone of the target repo the committed gitlink arrives
 uninitialized — the skill is silently skipped until
 `git submodule update --init --recursive` runs. Wire that into
-`.openhands/setup.sh` so sessions bootstrap it before skill discovery
-(see `references/skill-sync.md`).
+`.openhands/setup.sh` so sessions bootstrap it before skill discovery.
 
 Bump the pin after every merge here, or OpenHands keeps seeing the old revision
 while Claude Code's marketplace fetch tracks this repo's `main` tip:
@@ -124,8 +123,11 @@ while Claude Code's marketplace fetch tracks this repo's `main` tip:
 git submodule update --remote --checkout -- .agents/skills/agents-summoning
 ```
 
-See `references/skill-sync.md` for the full picture — it is the spellbook's own
-"Skill Sync" section, now shipped inside the skill it describes.
+then commit the gitlink (`--checkout` matters: it forces the pin even where the
+target repo configures `merge`/`rebase` update modes, and the submodule sits on
+a detached HEAD). Bonus: `.agents/skills` is also one of Copilot's project
+skill directories (alongside `.github/skills` and `.claude/skills`), so the
+same submodule serves Copilot's coding agent with no extra wiring.
 
 ## Sister skills
 
