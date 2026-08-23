@@ -138,13 +138,16 @@ tested here — Jules acts only on comments that mention it
 without a mention proves nothing: a submitted review whose inline comment
 wrote "jules" without the `@`, and a bare `/jules`, both drew no reaction,
 exactly as that rule predicts. The mentions are the finding. On this repo on
-2026-08-23, a mention **on the PR** was read — 👀 inside a minute — and
-answered with a push that replayed the task's original commit, same tree and
-same message; even "create an empty file at the repo root" came back that way,
-and where someone had pushed to the branch meanwhile, the replay restored the
-task's snapshot and read as a revert. A mention **on the originating issue**,
-after the task had started, drew nothing at all. So no GitHub comment changed
-what the running task produced — but that is a limit of the GitHub surfaces,
+2026-08-23, a mention **anywhere on the PR** was read — 👀 inside a minute —
+and answered with a push that replayed the task's original commit, same tree
+and same message. The surface does not matter: a conversation comment and a
+reply inside a review thread both reached the task, the latter accidentally,
+in 62 seconds. Even "create an empty file at the repo root" came back as a
+replay, and where someone had pushed to the branch meanwhile, the replay
+restored the task's snapshot and read as a revert — deleting that person's
+work. A mention **on the originating issue**, after the task had started,
+drew nothing at all: that surface is the one real dead end. So no GitHub
+comment changed what the running task produced — but that is a limit of the GitHub surfaces,
 not of Jules: the docs describe task chat in the Jules web UI, where feedback
 can make it replan ([docs](https://jules.google/docs/running-tasks/)), which
 was not tested here. Steer from the chat, or close the task and file a sharper
