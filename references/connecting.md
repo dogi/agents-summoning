@@ -145,13 +145,13 @@ reply inside a review thread both reached the task, the latter accidentally,
 in 62 seconds. Even "create an empty file at the repo root" came back as a
 replay, and where someone had pushed to the branch meanwhile, the replay
 restored the task's snapshot and read as a revert — deleting that person's
-work. A mention **on the originating issue**, after the task had started,
-drew nothing at all: that surface is the one real dead end. So no GitHub
-comment changed what the running task produced — but that is a limit of the
-GitHub surfaces, not of Jules: the docs describe task chat in the Jules web UI, where feedback
-can make it replan ([docs](https://jules.google/docs/running-tasks/)), which
-was not tested here. Steer from the chat, or close the task and file a sharper
-issue.
+work. A mention **on the originating issue**, after the task had started, drew
+nothing at all: that surface is the one real dead end. So no GitHub comment
+changed what the running task produced — but that is a limit of the GitHub
+surfaces, not of Jules: the docs describe task chat in the Jules web UI, where
+feedback can make it replan
+([docs](https://jules.google/docs/running-tasks/)), which was not tested here.
+Steer from the chat, or close the task and file a sharper issue.
 
 **What the task reported about itself.** Asked in the issue to answer in the PR
 description and label each claim, the 2026-08-23 task reported: submodules
