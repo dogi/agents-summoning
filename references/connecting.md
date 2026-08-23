@@ -82,3 +82,89 @@ and Dependabot (check `.github/dependabot.yml` and the repo's Insights tab).
 A passing probe per agent is worth a dated line in `NOTES.md` — what fired,
 how fast, under what identity — so the next silence can be compared against a
 known-good baseline instead of guesswork.
+
+### Loading the spellbook into Jules
+
+Jules runs every task in a fresh VM that clones the target repo, so the skill
+has to be committed there and initialized before the task starts.
+
+1. Add this repo as a submodule — the same path OpenHands and Copilot read:
+
+```bash
+git submodule add -b main https://github.com/dogi/agents-summoning.git .agents/skills/agents-summoning
+```
+
+2. Bridge it from the target repo's root `AGENTS.md`, the only instruction
+   file Jules reads — it ignores `CLAUDE.md`. The submodule on its own is not
+   a bridge:
+
+```markdown
+See `.agents/skills/agents-summoning/SKILL.md` for agent summoning rules.
+```
+
+3. Initialize the submodule from the **Initial Setup** script — Jules's
+   counterpart to `.openhands/setup.sh` — configured in the Jules web UI at
+   *Codebases → (repo) → Configuration → Initial Setup*
+   ([docs](https://jules.google/docs/environment/)). A fresh task clone leaves
+   the submodule directory empty, and no file committed to the repo can fix
+   that:
+
+```bash
+git submodule update --init --recursive
+```
+
+4. Commit and push `.gitmodules`, the submodule gitlink and the root
+   `AGENTS.md` before starting anything. Jules clones the repo fresh for every
+   task ([docs](https://jules.google/docs/environment/)), so a bridge that
+   exists only in your working tree is a bridge the task never sees:
+
+```bash
+git add .gitmodules .agents/skills/agents-summoning AGENTS.md
+git commit -m "chore: load the agents-summoning spellbook"
+git push
+```
+
+5. Start a task with the `jules` label on an issue, or from the Jules web UI.
+   A mention does not start one.
+
+Without an Initial Setup script, Jules "will also refer to agents.md or your
+readme.md file for hints to setup an environment on the fly"
+([docs](https://jules.google/docs/environment/)) — hints for building the
+environment, not a substitute for the files being present.
+
+**Steering a running task.** Under Reactive Mode — enabled on the account
+tested here — Jules acts only on comments that mention it
+([changelog](https://jules.google/docs/changelog/2025-09-23/)), so a comment
+without a mention proves nothing: a submitted review whose inline comment
+wrote "jules" without the `@`, and a bare `/jules`, both drew no reaction,
+exactly as that rule predicts. The mentions are the finding. On this repo on
+2026-08-23, a mention **anywhere on the PR** was read — 👀 inside a minute —
+and answered with a push that replayed the task's original commit, same tree
+and same message. The surface does not matter: a conversation comment and a
+reply inside a review thread both reached the task, the latter accidentally,
+in 62 seconds. Even "create an empty file at the repo root" came back as a
+replay, and where someone had pushed to the branch meanwhile, the replay
+restored the task's snapshot and read as a revert — deleting that person's
+work. A mention **on the originating issue**, after the task had started, drew
+nothing at all: that surface is the one real dead end. So no GitHub comment
+changed what the running task produced — but that is a limit of the GitHub
+surfaces, not of Jules: the docs describe task chat in the Jules web UI, where
+feedback can make it replan
+([docs](https://jules.google/docs/running-tasks/)), which was not tested here.
+Steer from the chat, or close the task and file a sharper issue.
+
+**What the task reported about itself.** Asked in the issue to answer in the PR
+description and label each claim, the 2026-08-23 task reported: submodules
+arrive uninitialized in the task VM, so the Initial Setup script is the only
+place that can populate them; a root `AGENTS.md` must name
+`.agents/skills/agents-summoning/SKILL.md` explicitly or the skill is never
+read; and the documented fallback — Jules consulting `AGENTS.md` or `README.md`
+for environment hints — builds an environment but cannot restore files that an
+uninitialized submodule left absent before the workspace is parsed. Treat these
+as *reported*, not measured. The same answer labelled as its own observations
+several findings that had been handed to it in the issue body, and claimed
+`AGENTS.md` is read "at the repo root or subdirectories" where the docs
+describe the root only. An earlier run, given no findings to copy, correctly
+marked the nesting question unverified. Ask an agent what it observed *before*
+telling it what you found — otherwise you get your own notes back wearing its
+authority.
