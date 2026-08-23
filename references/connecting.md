@@ -82,3 +82,29 @@ and Dependabot (check `.github/dependabot.yml` and the repo's Insights tab).
 A passing probe per agent is worth a dated line in `NOTES.md` — what fired,
 how fast, under what identity — so the next silence can be compared against a
 known-good baseline instead of guesswork.
+
+### Loading the spellbook into Jules
+
+Jules auto-loads instructions from `AGENTS.md` files (it reads `AGENTS.md` and ignores `CLAUDE.md`). Add this repo as a git submodule in the target repo so the skill files are present in the checkout:
+
+```bash
+git submodule add -b main https://github.com/dogi/agents-summoning.git .agents/skills/agents-summoning
+```
+
+The Jules-side counterpart of `.openhands/setup.sh` is the **Initial Setup script**, configured in the Jules web UI at **Codebases → (repo) → Configuration → Initial Setup**. It runs inside the fresh VM provisioned per task.
+
+Because a fresh task VM clone leaves submodules uninitialized by default, `git submodule update --init --recursive` belongs in the Initial Setup script — it cannot be committed into the target repo itself:
+
+```bash
+git submodule update --init --recursive
+```
+
+Without an Initial Setup script, Jules refers to `AGENTS.md` or `README.md` for environment setup hints on the fly, but uninitialized submodules remain empty directories in the workspace.
+
+**Summoning:** Apply the `jules` label on a GitHub issue (or start a task in the Jules web UI). `@`-mentions on issues or PRs do not start a task.
+
+#### First-party VM observations
+
+- **VM submodule behavior:** The task VM clone does not initialize submodules automatically. Running `git submodule update --init --recursive` in the Initial Setup script is genuinely required to populate submodules.
+- **Uninitialized submodule appearance:** An uninitialized submodule is present in the workspace as an empty directory.
+- **`AGENTS.md` scope:** Jules parses `AGENTS.md` hierarchically across the file tree (root and nested subdirectories). Instructions in deeply nested `AGENTS.md` files apply to their directory tree and override root instructions where they conflict.

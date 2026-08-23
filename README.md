@@ -132,3 +132,7 @@ same submodule serves Copilot's coding agent — provided its checkout
 initializes submodules, which a plain clone does not: wire
 `git submodule update --init --recursive` into Copilot's setup steps the same
 way `.openhands/setup.sh` does it for OpenHands.
+
+## Use it from Jules
+
+Jules: see [references/connecting.md](references/connecting.md#loading-the-spellbook-into-jules).
