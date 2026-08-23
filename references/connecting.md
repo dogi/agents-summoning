@@ -147,8 +147,8 @@ replay, and where someone had pushed to the branch meanwhile, the replay
 restored the task's snapshot and read as a revert — deleting that person's
 work. A mention **on the originating issue**, after the task had started,
 drew nothing at all: that surface is the one real dead end. So no GitHub
-comment changed what the running task produced — but that is a limit of the GitHub surfaces,
-not of Jules: the docs describe task chat in the Jules web UI, where feedback
+comment changed what the running task produced — but that is a limit of the
+GitHub surfaces, not of Jules: the docs describe task chat in the Jules web UI, where feedback
 can make it replan ([docs](https://jules.google/docs/running-tasks/)), which
 was not tested here. Steer from the chat, or close the task and file a sharper
 issue.
