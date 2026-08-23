@@ -82,3 +82,55 @@ and Dependabot (check `.github/dependabot.yml` and the repo's Insights tab).
 A passing probe per agent is worth a dated line in `NOTES.md` — what fired,
 how fast, under what identity — so the next silence can be compared against a
 known-good baseline instead of guesswork.
+
+### Loading the spellbook into Jules
+
+Jules runs every task in a fresh VM that clones the target repo, so the skill
+has to be committed there and initialized before the task starts.
+
+1. Add this repo as a submodule — the same path OpenHands and Copilot read:
+
+```bash
+git submodule add -b main https://github.com/dogi/agents-summoning.git .agents/skills/agents-summoning
+```
+
+2. Bridge it from the target repo's root `AGENTS.md`, the only instruction
+   file Jules reads — it ignores `CLAUDE.md`. The submodule on its own is not
+   a bridge:
+
+```markdown
+See `.agents/skills/agents-summoning/SKILL.md` for agent summoning rules.
+```
+
+3. Initialize the submodule from the **Initial Setup** script — Jules's
+   counterpart to `.openhands/setup.sh` — configured in the Jules web UI at
+   *Codebases → (repo) → Configuration → Initial Setup*
+   ([docs](https://jules.google/docs/environment/)). A fresh task clone leaves
+   the submodule directory empty, and no file committed to the repo can fix
+   that:
+
+```bash
+git submodule update --init --recursive
+```
+
+4. Start a task with the `jules` label on an issue, or from the Jules web UI.
+   A mention does not start one.
+
+Without an Initial Setup script, Jules "will also refer to agents.md or your
+readme.md file for hints to setup an environment on the fly"
+([docs](https://jules.google/docs/environment/)) — hints for building the
+environment, not a substitute for the files being present.
+
+**Steering a running task.** A task's plan, tree and commit message are fixed
+when it starts. Measured on this repo on 2026-08-23, on an account with
+Reactive Mode enabled: a submitted review with inline comments drew no
+reaction, a comment on the originating issue drew none, and `/jules` drew
+none. Only comments mentioning the bot were read — 👀 inside a minute — and
+each produced a push that replayed the task's original commit, same tree and
+same message; even "create an empty file at the repo root" came back that
+way. Where someone had pushed to the branch meanwhile, the replay restored
+the task's snapshot and read as a revert. One channel we did not test: the
+task chat in the Jules web UI, where feedback can make Jules replan
+([docs](https://jules.google/docs/running-tasks/)). So steer from the chat, or
+close the task and file a sharper issue — a GitHub comment will not change the
+code.
