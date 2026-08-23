@@ -135,23 +135,39 @@ way `.openhands/setup.sh` does it for OpenHands.
 
 ## Use it from Jules
 
-Jules reads system instructions from `AGENTS.md` at the repo root (it ignores
-`CLAUDE.md`). Like OpenHands, Jules executes inside a clone and requires skill
-files to be physically present in the repository. Add this repo as a git submodule:
+Jules clones your repo into a **fresh VM for every task**, so the skill has to
+be in the repository *and* initialized by the repo's **Initial Setup** script —
+configured in the Jules web UI at *Codebases → (your repo) → Configuration →
+Initial Setup* ([docs](https://jules.google/docs/environment/)), not by any file
+in the repo. That script is Jules's counterpart to `.openhands/setup.sh`.
+
+1. Add this repo as a submodule — the same path OpenHands and Copilot read:
 
 ```bash
 git submodule add -b main https://github.com/dogi/agents-summoning.git .agents/skills/agents-summoning
 ```
 
-Then point Jules at the skill by referencing the file in your root `AGENTS.md`:
+2. Put the submodule init in **Initial Setup**, or every task starts with an
+   empty directory there and the skill is silently skipped:
+
+```bash
+git submodule update --init --recursive
+```
+
+3. Point Jules at the skill from the root `AGENTS.md` — Jules reads
+   `AGENTS.md`, not `CLAUDE.md`:
 
 ```markdown
 See `.agents/skills/agents-summoning/SKILL.md` for agent summoning rules.
 ```
 
-**Silent-skip gotchas:**
-- **Uninitialized submodule:** On a fresh clone, git submodules arrive
-  uninitialized. Jules will silently skip the skill unless submodules are
-  initialized (`git submodule update --init --recursive`).
-- **Wrong instruction file:** Placing the instruction in `CLAUDE.md` instead of
-  `AGENTS.md` causes Jules to ignore it completely.
+4. Start the task by applying the **`jules` label to an issue** — that is the
+   summon, and it means "implement this issue". A mention will not start one
+   (verified 2026-08-21 on both a PR and an issue). Once a task owns a PR,
+   a comment that mentions the bot *does* reach it — that is how you steer it
+   afterwards, not how you begin.
+
+With no Initial Setup script configured, Jules "will also refer to agents.md or
+your readme.md file for hints to setup an environment on the fly"
+([docs](https://jules.google/docs/environment/)) — hints for *building* the
+environment, not a substitute for the submodule being present.
