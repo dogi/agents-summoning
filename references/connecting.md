@@ -121,19 +121,23 @@ readme.md file for hints to setup an environment on the fly"
 ([docs](https://jules.google/docs/environment/)) — hints for building the
 environment, not a substitute for the files being present.
 
-**Steering a running task.** A task's plan, tree and commit message are fixed
-when it starts. Measured on this repo on 2026-08-23, on an account with
-Reactive Mode enabled: a submitted review with inline comments drew no
-reaction, a comment on the originating issue drew none, and `/jules` drew
-none. Only comments mentioning the bot were read — 👀 inside a minute — and
-each produced a push that replayed the task's original commit, same tree and
-same message; even "create an empty file at the repo root" came back that
-way. Where someone had pushed to the branch meanwhile, the replay restored
-the task's snapshot and read as a revert. One channel we did not test: the
-task chat in the Jules web UI, where feedback can make Jules replan
-([docs](https://jules.google/docs/running-tasks/)). So steer from the chat, or
-close the task and file a sharper issue — a GitHub comment will not change the
-code.
+**Steering a running task.** Under Reactive Mode — enabled on the account
+tested here — Jules acts only on comments that mention it
+([changelog](https://jules.google/docs/changelog/2025-09-23/)), so a comment
+without a mention proves nothing: a submitted review whose inline comment
+wrote "jules" without the `@`, and a bare `/jules`, both drew no reaction,
+exactly as that rule predicts. The mentions are the finding. On this repo on
+2026-08-23, a mention **on the PR** was read — 👀 inside a minute — and
+answered with a push that replayed the task's original commit, same tree and
+same message; even "create an empty file at the repo root" came back that way,
+and where someone had pushed to the branch meanwhile, the replay restored the
+task's snapshot and read as a revert. A mention **on the originating issue**,
+after the task had started, drew nothing at all. So no GitHub comment changed
+what the running task produced — but that is a limit of the GitHub surfaces,
+not of Jules: the docs describe task chat in the Jules web UI, where feedback
+can make it replan ([docs](https://jules.google/docs/running-tasks/)), which
+was not tested here. Steer from the chat, or close the task and file a sharper
+issue.
 
 **What the task reported about itself.** Asked in the issue to answer in the PR
 description and label each claim, the 2026-08-23 task reported: submodules
