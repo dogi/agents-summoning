@@ -132,3 +132,26 @@ same submodule serves Copilot's coding agent — provided its checkout
 initializes submodules, which a plain clone does not: wire
 `git submodule update --init --recursive` into Copilot's setup steps the same
 way `.openhands/setup.sh` does it for OpenHands.
+
+## Use it from Jules
+
+Jules reads system instructions from `AGENTS.md` at the repo root (it ignores
+`CLAUDE.md`). Like OpenHands, Jules executes inside a clone and requires skill
+files to be physically present in the repository. Add this repo as a git submodule:
+
+```bash
+git submodule add -b main https://github.com/dogi/agents-summoning.git .agents/skills/agents-summoning
+```
+
+Then point Jules at the skill by referencing the file in your root `AGENTS.md`:
+
+```markdown
+See `.agents/skills/agents-summoning/SKILL.md` for agent summoning rules.
+```
+
+**Silent-skip gotchas:**
+- **Uninitialized submodule:** On a fresh clone, git submodules arrive
+  uninitialized. Jules will silently skip the skill unless submodules are
+  initialized (`git submodule update --init --recursive`).
+- **Wrong instruction file:** Placing the instruction in `CLAUDE.md` instead of
+  `AGENTS.md` causes Jules to ignore it completely.
