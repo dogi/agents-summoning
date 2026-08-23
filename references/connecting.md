@@ -134,3 +134,19 @@ task chat in the Jules web UI, where feedback can make Jules replan
 ([docs](https://jules.google/docs/running-tasks/)). So steer from the chat, or
 close the task and file a sharper issue — a GitHub comment will not change the
 code.
+
+**What the task reported about itself.** Asked in the issue to answer in the PR
+description and label each claim, the 2026-08-23 task reported: submodules
+arrive uninitialized in the task VM, so the Initial Setup script is the only
+place that can populate them; a root `AGENTS.md` must name
+`.agents/skills/agents-summoning/SKILL.md` explicitly or the skill is never
+read; and the documented fallback — Jules consulting `AGENTS.md` or `README.md`
+for environment hints — builds an environment but cannot restore files that an
+uninitialized submodule left absent before the workspace is parsed. Treat these
+as *reported*, not measured. The same answer labelled as its own observations
+several findings that had been handed to it in the issue body, and claimed
+`AGENTS.md` is read "at the repo root or subdirectories" where the docs
+describe the root only. An earlier run, given no findings to copy, correctly
+marked the nesting question unverified. Ask an agent what it observed *before*
+telling it what you found — otherwise you get your own notes back wearing its
+authority.
